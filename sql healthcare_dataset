@@ -1,0 +1,89 @@
+--Create database Healthcare_DB
+Create database Healthcare_DB
+
+
+
+/*
+What are the details of patients examined by Dr. Brian Chandler exhibiting abnormal test results? 
+Display patient names, genders, and their respective medical conditions from the healthcare dataset
+*/
+
+Select 
+	name,
+	gender, 
+	medical_condition
+From healthcare_dataset
+Where 
+	Doctor = 'Brian Chandler' 
+and 
+	Test_Results = 'abnormal'
+
+
+
+/*
+What is the total billed amount for patients discharged in November
+grouped by their respective insurance providers within the healthcare dataset?
+*/
+
+Select 
+	sum(billing_amount) as Total_Billed_Amount,
+	Insurance_Provider
+From healthcare_dataset
+Where MONTH (discharge_date) = 11
+Group by Insurance_Provider
+
+
+/* 
+What is the overview of abnormal and inconclusive test results for patients seen 
+at hospitals containing 'Yates' in their name within the healthcare dataset? 
+Display the patient names, test results, medical diagnoses, 
+and hospital names, sorted by the severity of the diagnosis.
+*/
+
+SELECT Name AS Patient_Name,
+       Test_Results,
+       medical_condition AS Diagnosis,
+       Hospital
+FROM healthcare_dataset
+WHERE Hospital LIKE '%Yates%'
+  AND Test_Results = 'abnormal'
+UNION ALL
+SELECT Name AS Patient_Name,
+       Test_Results,
+       medical_condition AS Diagnosis,
+       Hospital
+FROM healthcare_dataset
+WHERE Hospital LIKE '%Yates%'
+  AND Test_Results = 'inconclusive'
+ORDER BY Diagnosis;
+
+
+
+/* 
+What is the breakdown of patient admissions categorized by age groups (Pediatric, Adult, Senior) 
+for the '2023 Summer Intakes' (June, July, and August) based on the healthcare dataset? 
+Show patient names, ages, and admission dates, sorted by the latest admission date
+*/
+
+
+SELECT
+    Name AS Patient,
+    Age,
+    date_of_admission AS '2023 Summer Intakes',
+    CASE
+        WHEN Age < 18 THEN 'Pediatric'
+        WHEN Age >= 18 AND Age < 65 THEN 'Adult'
+        ELSE 'Senior'
+    END AS 'Age Group'
+FROM
+    healthcare_dataset
+WHERE
+    YEAR(date_of_admission) = 2023
+    AND (
+        MONTH(date_of_admission) = 6
+        OR MONTH(date_of_admission) = 7
+        OR MONTH(date_of_admission) = 8
+    )
+ORDER BY Date_of_Admission desc
+
+
